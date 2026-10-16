@@ -1,0 +1,7 @@
+enum UserRole {
+    ORGANIZATION_OWNER
+    MANAGER
+    TEAM_MEMBER
+    GUEST
+    ADMIN
+}

@@ -1,0 +1,22 @@
+import z, { email } from "zod";
+
+const zodRegisterSchema = z.object({
+  name: z.string("Name is Required!"),
+  email: z.email("email is Required!"),
+  password: z
+    .string()
+    .min(8)
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(
+      /[^A-Za-z0-9]/,
+      "Password must contain at least one special character",
+    ),
+  phone_number: z.string().optional(),
+  image_url: z.string().optional(),
+});
+
+export const authValidation = {
+  zodRegisterSchema,
+};
