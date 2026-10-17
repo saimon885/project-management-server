@@ -2,6 +2,7 @@ import z from "zod";
 import { catchAsync } from "../utility/catchAsync";
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+
 export const validationRequest = (zodSchema: z.ZodObject) => {
   return catchAsync((req: Request, res: Response, next: NextFunction) => {
     const payload = req.body ?? {};

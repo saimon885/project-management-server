@@ -9,9 +9,17 @@ router.post(
   validationRequest(authValidation.zodRegisterSchema),
   authController.RegisterUser,
 );
-router.post("/login", authController.LoginUser);
+router.post(
+  "/verify-email",
+  validationRequest(authValidation.zodVerifySchema),
+  authController.VerifyEmail,
+);
+router.post(
+  "/login",
+  validationRequest(authValidation.zodLoginSchema),
+  authController.LoginUser,
+);
 // router.post("/logout");
-// router.post("/verify-email");
 // router.post("/google");
 // router.post("/forgot-password");
 // router.post("/reset-password");

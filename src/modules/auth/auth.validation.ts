@@ -16,7 +16,26 @@ const zodRegisterSchema = z.object({
   phone_number: z.string().optional(),
   image_url: z.string().optional(),
 });
+const zodLoginSchema = z.object({
+  email: z.email("email is Required!"),
+  password: z
+    .string()
+    .min(8)
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(
+      /[^A-Za-z0-9]/,
+      "Password must contain at least one special character",
+    ),
+});
+const zodVerifySchema = z.object({
+  email: z.email("email is Required!"),
+  otp: z.string(),
+});
 
 export const authValidation = {
   zodRegisterSchema,
+  zodVerifySchema,
+  zodLoginSchema,
 };

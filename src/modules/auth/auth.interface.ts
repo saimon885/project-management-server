@@ -5,3 +5,11 @@ export interface registerPayload {
   image_url?: string;
   phone_number?: string;
 }
+export interface loginPayload {
+  email: string;
+  password: string;
+}
+export interface verifyPayload {
+  email: string;
+  otp: string;
+}
