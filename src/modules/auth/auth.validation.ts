@@ -1,4 +1,4 @@
-import z, { email } from "zod";
+import z from "zod";
 
 const zodRegisterSchema = z.object({
   name: z.string("Name is Required!"),

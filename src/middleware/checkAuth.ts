@@ -28,7 +28,7 @@ export const auth = (...requiredRoles: UserRole[]) => {
       : req.headers.authorization?.startsWith("Bearer ")
         ? req.headers.authorization?.split(" ")[1]
         : req.headers.authorization;
-    console.log(token);
+  
     if (!token) {
       throw new AppError(
         httpStatus.UNAUTHORIZED,

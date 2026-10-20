@@ -4,6 +4,7 @@ import { sendResponse } from "../../utility/sendResponse";
 import httpStatus from "http-status";
 import { authService } from "./auth.service";
 import config from "../../config";
+
 const RegisterUser = catchAsync(async (req: Request, res: Response) => {
   await authService.RegisterUser(req.body);
   sendResponse(res, {
@@ -61,6 +62,7 @@ const LoginUser = catchAsync(async (req: Request, res: Response) => {
     data: { accessToken, refreshToken, user },
   });
 });
+
 const LogOut = catchAsync(async (req: Request, res: Response) => {
   const cookieOptions = {
     secure: config.node_env === "production",
@@ -79,6 +81,7 @@ const LogOut = catchAsync(async (req: Request, res: Response) => {
     data: null,
   });
 });
+
 const forgotPassword = catchAsync(async (req: Request, res: Response) => {
   await authService.ForgotPassword(req.body);
   sendResponse(res, {
@@ -88,6 +91,7 @@ const forgotPassword = catchAsync(async (req: Request, res: Response) => {
     data: null,
   });
 });
+
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
   await authService.resetPassword(req.body);
   sendResponse(res, {
@@ -97,6 +101,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
     data: null,
   });
 });
+
 export const authController = {
   RegisterUser,
   LoginUser,
