@@ -3,6 +3,7 @@ import { catchAsync } from "../../utility/catchAsync";
 import { sendResponse } from "../../utility/sendResponse";
 import httpStatus from "http-status";
 import { authService } from "./auth.service";
+import config from "../../config";
 const RegisterUser = catchAsync(async (req: Request, res: Response) => {
   await authService.RegisterUser(req.body);
   sendResponse(res, {
@@ -60,8 +61,47 @@ const LoginUser = catchAsync(async (req: Request, res: Response) => {
     data: { accessToken, refreshToken, user },
   });
 });
+const LogOut = catchAsync(async (req: Request, res: Response) => {
+  const cookieOptions = {
+    secure: config.node_env === "production",
+    httpOnly: true,
+    sameSite:
+      config.node_env === "production" ? ("none" as const) : ("lax" as const),
+    path: "/",
+  };
+
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    messege: "LogOut successfull.",
+    data: null,
+  });
+});
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  await authService.ForgotPassword(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    messege: "check your email for otp.",
+    data: null,
+  });
+});
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  await authService.resetPassword(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    messege: "password reset successfully.",
+    data: null,
+  });
+});
 export const authController = {
   RegisterUser,
   LoginUser,
   VerifyEmail,
+  LogOut,
+  forgotPassword,
+  resetPassword,
 };

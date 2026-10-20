@@ -16,6 +16,7 @@ const zodRegisterSchema = z.object({
   phone_number: z.string().optional(),
   image_url: z.string().optional(),
 });
+
 const zodLoginSchema = z.object({
   email: z.email("email is Required!"),
   password: z
@@ -29,13 +30,25 @@ const zodLoginSchema = z.object({
       "Password must contain at least one special character",
     ),
 });
+
 const zodVerifySchema = z.object({
   email: z.email("email is Required!"),
-  otp: z.string(),
+  otp: z.string("otp is Required!"),
+});
+const zodForgotSchema = z.object({
+  email: z.email("email is Required!"),
+});
+
+const zodResetSchema = z.object({
+  email: z.email("email is Required!"),
+  otp: z.string("otp is Required!"),
+  newPassword: z.string("newPassword is Required!"),
 });
 
 export const authValidation = {
   zodRegisterSchema,
   zodVerifySchema,
   zodLoginSchema,
+  zodForgotSchema,
+  zodResetSchema,
 };

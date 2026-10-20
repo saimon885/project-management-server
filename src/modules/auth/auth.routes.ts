@@ -19,8 +19,16 @@ router.post(
   validationRequest(authValidation.zodLoginSchema),
   authController.LoginUser,
 );
-// router.post("/logout");
+router.post("/logOut", authController.LogOut);
 // router.post("/google");
-// router.post("/forgot-password");
-// router.post("/reset-password");
+router.post(
+  "/forgot-password",
+  validationRequest(authValidation.zodForgotSchema),
+  authController.forgotPassword,
+);
+router.post(
+  "/reset-password",
+  validationRequest(authValidation.zodResetSchema),
+  authController.resetPassword,
+);
 export const authRoutes = router;

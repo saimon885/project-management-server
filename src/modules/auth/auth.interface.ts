@@ -13,3 +13,8 @@ export interface verifyPayload {
   email: string;
   otp: string;
 }
+export interface resetPassPayload {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
