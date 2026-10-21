@@ -35,6 +35,11 @@ const zodVerifySchema = z.object({
   email: z.email("email is Required!"),
   otp: z.string("otp is Required!"),
 });
+
+const zodGoogleLoginSchema = z.object({
+  idToken: z.string("idToken is Required!"),
+});
+
 const zodForgotSchema = z.object({
   email: z.email("email is Required!"),
 });
@@ -51,4 +56,5 @@ export const authValidation = {
   zodLoginSchema,
   zodForgotSchema,
   zodResetSchema,
+  zodGoogleLoginSchema,
 };

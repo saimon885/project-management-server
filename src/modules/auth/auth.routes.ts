@@ -15,12 +15,16 @@ router.post(
   authController.VerifyEmail,
 );
 router.post(
+  "/google-login",
+  validationRequest(authValidation.zodGoogleLoginSchema),
+  authController.googleLogin,
+);
+router.post(
   "/login",
   validationRequest(authValidation.zodLoginSchema),
   authController.LoginUser,
 );
 router.post("/logOut", authController.LogOut);
-// router.post("/google");
 router.post(
   "/forgot-password",
   validationRequest(authValidation.zodForgotSchema),

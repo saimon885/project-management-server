@@ -5,3 +5,13 @@ enum UserRole {
     GUEST
     ADMIN
 }
+enum authProviderName{
+    GOOGLE
+    CREDENTIALS
+}
+
+enum userStatus {
+    ACTIVE
+    BLOCKED
+    DELETED
+}

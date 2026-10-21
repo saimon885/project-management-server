@@ -1,14 +1,18 @@
 model User {
-    id               String   @id @default(uuid())
+    id               String           @id @default(uuid())
     name             String
-    email            String   @unique
+    email            String           @unique
     password         String?
-    role             UserRole @default(GUEST)
-    image_url        String   @default("")
-    imagePublishedID String   @default("")
+    role             UserRole         @default(GUEST)
+    image_url        String           @default("")
+    imagePublishedID String           @default("")
     phone_number     String?
-    createdAt        DateTime @default(now())
-    updatedAt        DateTime @updatedAt
+    authProvider     authProviderName @default(CREDENTIALS)
+    status           userStatus       @default(ACTIVE)
+    emailVerified    Boolean          @default(false)
+    googleId         String?          @unique
+    createdAt        DateTime         @default(now())
+    updatedAt        DateTime         @updatedAt
 
     @@index([email, password, id])
     @@map("users")

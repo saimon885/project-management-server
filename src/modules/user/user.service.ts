@@ -1,10 +1,10 @@
 import { UploadApiResponse } from "cloudinary";
 import { prisma } from "../../lib/prisma";
-import { cloudinary } from "../../middleware/cloudinary";
 
 import { AppError } from "../../utility/AppError";
 import httpStatus from "http-status";
 import { updateUserPayload } from "./user.interface";
+import { cloudinary } from "../../lib/cloudinary";
 
 const getMyProfile = async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -59,8 +59,6 @@ const updateUserProfile = async (
         cloudinary.uploader
           .upload_stream({ resource_type: "auto" }, (error, result) => {
             if (error) {
-            
-
               return reject(
                 new AppError(
                   httpStatus.INTERNAL_SERVER_ERROR,

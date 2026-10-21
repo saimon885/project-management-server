@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
 import {
+  IgoogleLoginToken,
   loginPayload,
   registerPayload,
   resetPassPayload,
@@ -15,6 +16,13 @@ import crypto from "crypto";
 import { redisClient } from "../../lib/redis";
 import path from "path";
 import { transporter } from "../../lib/nodemailer";
+import { TokenPayload } from "google-auth-library";
+import { googleClient } from "../../lib/googleAuth";
+import {
+  authProviderName,
+  UserRole,
+  userStatus,
+} from "../../../generated/prisma/enums";
 
 const RegisterUser = async (payload: registerPayload) => {
   const userEmailExist = await prisma.user.findUnique({
@@ -135,6 +143,99 @@ const VerifyEmail = async (payload: verifyPayload) => {
     config.jwt_refresh_expire_in,
   );
   return { accessToken, refreshToken, user: result };
+};
+
+const googleLogin = async (payload: IgoogleLoginToken) => {
+  let googleIdTokenPayload: TokenPayload | null | undefined = null;
+
+  try {
+    const token = await googleClient.verifyIdToken({
+      idToken: payload.idToken,
+    });
+    googleIdTokenPayload = token.getPayload();
+  } catch (error) {
+    throw new AppError(
+      httpStatus.EXPECTATION_FAILED,
+      "Invalid or expired Google ID token.",
+    );
+  }
+
+  if (
+    !googleIdTokenPayload ||
+    !googleIdTokenPayload.email ||
+    !googleIdTokenPayload.name
+  ) {
+    throw new AppError(
+      httpStatus.EXPECTATION_FAILED,
+      "Invalid token payload or missing user details",
+    );
+  }
+  const { name, email, sub: googleId } = googleIdTokenPayload;
+
+  let user = await prisma.user.findUnique({
+    where: {
+      googleId,
+    },
+  });
+  if (!user) {
+    const existingUserByEmail = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (existingUserByEmail) {
+      if (existingUserByEmail.status === userStatus.BLOCKED) {
+        throw new AppError(httpStatus.CONFLICT, "User is blocked");
+      }
+      if (existingUserByEmail.status === userStatus.DELETED) {
+        throw new AppError(httpStatus.CONFLICT, "User is deleted");
+      }
+      user = await prisma.user.update({
+        where: {
+          id: existingUserByEmail.id,
+        },
+        data: {
+          googleId,
+          emailVerified: true,
+          image_url: googleIdTokenPayload.picture,
+        },
+      });
+    } else {
+      user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          authProvider: authProviderName.GOOGLE,
+          emailVerified: true,
+          googleId,
+          role: UserRole.GUEST,
+        },
+      });
+    }
+  }
+  const jwtPayload = {
+    userId: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  };
+
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_access_secret,
+    config.jwt_access_expire_in,
+  );
+
+  const refreshToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_refresh_secret,
+    config.jwt_refresh_expire_in,
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 const LoginUser = async (payload: loginPayload) => {
@@ -271,6 +372,7 @@ export const authService = {
   RegisterUser,
   LoginUser,
   VerifyEmail,
+  googleLogin,
   ForgotPassword,
   resetPassword,
 };

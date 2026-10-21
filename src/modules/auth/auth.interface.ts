@@ -18,3 +18,6 @@ export interface resetPassPayload {
   otp: string;
   newPassword: string;
 }
+export interface IgoogleLoginToken {
+  idToken: string;
+}

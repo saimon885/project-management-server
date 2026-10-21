@@ -2,7 +2,7 @@ import { Router } from "express";
 import { auth } from "../../middleware/checkAuth";
 import { userController } from "./user.controller";
 import { UserRole } from "../../../generated/prisma/enums";
-import { upload } from "../../middleware/multer";
+import { upload } from "../../lib/multer";
 
 const router = Router();
 router.get("/me", auth(), userController.getMyProfile);
