@@ -1,0 +1,13 @@
+model OrganizationMember {
+    id             String       @id @default(uuid())
+    role           UserRole     @default(MEMBER)
+    organizationId String
+    userId         String
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    joinedAt DateTime @default(now())
+
+    @@unique([organizationId, userId])
+    @@map("organization_members")
+}

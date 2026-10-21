@@ -11,7 +11,6 @@ export interface UserPayload {
   email: string;
   name: string;
   userId: string;
-  role: UserRole;
 }
 
 declare global {
@@ -28,7 +27,7 @@ export const auth = (...requiredRoles: UserRole[]) => {
       : req.headers.authorization?.startsWith("Bearer ")
         ? req.headers.authorization?.split(" ")[1]
         : req.headers.authorization;
-  
+
     if (!token) {
       throw new AppError(
         httpStatus.UNAUTHORIZED,
@@ -39,20 +38,19 @@ export const auth = (...requiredRoles: UserRole[]) => {
     if (!verifiedToken.success) {
       throw new AppError(httpStatus.UNAUTHORIZED, verifiedToken.error);
     }
-    const { userId, name, email, role } = verifiedToken.data as UserPayload;
+    const { userId, name, email } = verifiedToken.data as UserPayload;
 
-    if (requiredRoles.length && !requiredRoles.includes(role)) {
-      throw new AppError(
-        httpStatus.FORBIDDEN,
-        "Forbidden. You don't have permission to access this resource.",
-      );
-    }
+    // if (requiredRoles.length && !requiredRoles.includes(role)) {
+    //   throw new AppError(
+    //     httpStatus.FORBIDDEN,
+    //     "Forbidden. You don't have permission to access this resource.",
+    //   );
+    // }
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
         email,
         name,
-        role,
       },
     });
 
@@ -63,17 +61,17 @@ export const auth = (...requiredRoles: UserRole[]) => {
       );
     }
 
-    // if (user. === "BLOCKED") {
-    //   throw new AppError(
-    //     httpStatus.FORBIDDEN,
-    //     "Your account has been blocked. Please contact support.",
-    //   );
-    // }
+    if (user.status === "BLOCKED") {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "Your account has been blocked. Please contact support.",
+      );
+    }
     req.user = {
       email,
       name,
       userId,
-      role,
+      // role,
     };
     next();
   });

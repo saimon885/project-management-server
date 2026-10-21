@@ -2,10 +2,12 @@ enum UserRole {
     ORGANIZATION_OWNER
     MANAGER
     TEAM_MEMBER
+    MEMBER
     GUEST
     ADMIN
 }
-enum authProviderName{
+
+enum authProviderName {
     GOOGLE
     CREDENTIALS
 }

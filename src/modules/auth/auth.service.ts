@@ -18,11 +18,7 @@ import path from "path";
 import { transporter } from "../../lib/nodemailer";
 import { TokenPayload } from "google-auth-library";
 import { googleClient } from "../../lib/googleAuth";
-import {
-  authProviderName,
-  UserRole,
-  userStatus,
-} from "../../../generated/prisma/enums";
+import { authProviderName, userStatus } from "../../../generated/prisma/enums";
 
 const RegisterUser = async (payload: registerPayload) => {
   const userEmailExist = await prisma.user.findUnique({
@@ -130,7 +126,6 @@ const VerifyEmail = async (payload: verifyPayload) => {
     userId: result.id,
     name: result.name,
     email: result.email,
-    role: result.role,
   };
   const accessToken = jwtUtils.createToken(
     jwtPayload,
@@ -208,7 +203,6 @@ const googleLogin = async (payload: IgoogleLoginToken) => {
           authProvider: authProviderName.GOOGLE,
           emailVerified: true,
           googleId,
-          role: UserRole.GUEST,
         },
       });
     }
@@ -217,7 +211,6 @@ const googleLogin = async (payload: IgoogleLoginToken) => {
     userId: user.id,
     name: user.name,
     email: user.email,
-    role: user.role,
   };
 
   const accessToken = jwtUtils.createToken(
@@ -274,7 +267,6 @@ const LoginUser = async (payload: loginPayload) => {
     userId: user.id,
     name: user.name,
     email: user.email,
-    role: user.role,
   };
   const accessToken = jwtUtils.createToken(
     jwtPayload,
