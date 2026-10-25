@@ -12,4 +12,6 @@ router.post(
   organizationController.createOrganization,
 );
 
+router.get("/org", auth(), organizationController.getOrganization);
+
 export const organizationRoutes = router;

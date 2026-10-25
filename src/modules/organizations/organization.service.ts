@@ -68,7 +68,30 @@ const CreateOrganization = async (
   });
   return result;
 };
+const getOrganization = async () => {
+  const result = await prisma.organization.findMany({
+    include: {
+      members: {
+        select: {
+          role: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+              phone_number: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!result) {
+    new AppError(httpStatus.NOT_FOUND, "organization not found!");
+  }
+  return result;
+};
 
 export const organizationService = {
   CreateOrganization,
+  getOrganization,
 };

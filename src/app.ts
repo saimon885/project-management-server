@@ -8,6 +8,7 @@ import { notFound } from "./middleware/not-found";
 import { auth } from "./middleware/checkAuth";
 import { userRoutes } from "./modules/user/user.routes";
 import { organizationRoutes } from "./modules/organizations/organization.routes";
+import { invitationRoutes } from "./modules/invitation/invitation.routes";
 export const app = express();
 
 app.use(express.json());
@@ -22,6 +23,7 @@ app.get("/", auth(), (req: Request, res: Response) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/organizations", organizationRoutes);
+app.use("/api/v1/invitation", invitationRoutes);
 
 app.use(globalErrorHandler);
 app.use(notFound);
