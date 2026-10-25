@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invitation Accepted Successfully</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      font-family:
+        -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto,
+        Helvetica, Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="background-color: #f8fafc; padding: 50px 0"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            style="
+              background-color: #ffffff;
+              border-radius: 12px;
+              border: 1px solid #e2e8f0;
+              overflow: hidden;
+            "
+          >
+            <tr>
+              <td style="padding: 40px 40px 20px 40px; text-align: left">
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1.5px;
+                    color: #6366f1;
+                    margin-bottom: 12px;
+                  "
+                >
+                  Project Management System
+                </div>
+                <h1
+                  style="
+                    margin: 0;
+                    color: #0f172a;
+                    font-size: 28px;
+                    font-weight: 800;
+                    line-height: 1.2;
+                  "
+                >
+                  Welcome to the Team! 🎉
+                </h1>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 20px 40px 40px 40px">
+                <p
+                  style="
+                    margin: 0 0 20px 0;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    color: #475569;
+                  "
+                >
+                  Hello <strong><%= name %></strong>,
+                </p>
+                <p
+                  style="
+                    margin: 0 0 24px 0;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    color: #475569;
+                  "
+                >
+                  Your acceptance has been processed successfully. You are now
+                  officially a member of
+                  <strong><%= organizationName %></strong> with the role of
+                  <strong><%= role %></strong>.
+                </p>
+
+                <table
+                  role="presentation"
+                  cellspacing="0"
+                  cellpadding="0"
+                  border="0"
+                  style="
+                    margin: 24px 0;
+                    background-color: #f1f5f9;
+                    border-radius: 8px;
+                    width: 100%;
+                  "
+                >
+                  <tr>
+                    <td align="center" style="padding: 20px">
+                      <div
+                        style="
+                          font-size: 18px;
+                          font-weight: 700;
+                          color: #4f46e5;
+                        "
+                      >
+                        Setup Complete
+                      </div>
+                      <div
+                        style="
+                          font-size: 14px;
+                          color: #64748b;
+                          margin-top: 8px;
+                          font-weight: 500;
+                        "
+                      >
+                        You can now access all shared workspaces, projects, and
+                        collaborate with your teammates.
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <p
+                  style="
+                    margin: 0 0 32px 0;
+                    font-size: 15px;
+                    line-height: 1.6;
+                    color: #64748b;
+                  "
+                >
+                  Log into your dashboard at any time to switch to your new
+                  organization workspace profile.
+                </p>
+
+                <p
+                  style="
+                    margin: 0;
+                    font-size: 15px;
+                    color: #64748b;
+                    line-height: 1.6;
+                  "
+                >
+                  Best regards,<br />
+                  <span style="font-weight: 600; color: #0f172a"
+                    >The Operations Team</span
+                  >
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  padding: 32px 40px;
+                  background-color: #f1f5f9;
+                  border-top: 1px solid #e2e8f0;
+                  text-align: left;
+                "
+              >
+                <p
+                  style="
+                    margin: 0 0 8px 0;
+                    font-size: 13px;
+                    line-height: 1.5;
+                    color: #64748b;
+                  "
+                >
+                  This is an automated confirmation email regarding your
+                  workspace status update.
+                </p>
+                <p style="margin: 0; font-size: 12px; color: #94a3b8">
+                  &copy; <%= year %> Workspace Enterprise. All rights reserved.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -5,6 +5,8 @@ import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
 import httpStatus from "http-status";
 import crypto from "crypto";
+import path from "path";
+import ejs from "ejs";
 export interface IinviteUserPayload {
   email: string;
   role: UserRole;
@@ -68,28 +70,35 @@ const sendInvitation = async (payload: IinviteUserPayload, orgId: string) => {
     },
   });
 
+  const template = path.join(
+    process.cwd(),
+    "/src/templates/invitation/invite-send-tamplates.ejs",
+  );
   const inviteLink = `${config.app_url}/accept-invite?token=${token}`;
-
-  await transporter.sendMail({
-    to: email,
-    subject: `You've been invited to join ${invitation.organization.name}`,
-    html: `
-      <h2>You are invited!</h2>
-      <p>You have been invited to join <strong>${invitation.organization.name}</strong> as a <strong>${role}</strong>.</p>
-      <p>Click the link below to accept the invitation (Valid for 7 days):</p>
-      <a href="${inviteLink}" style="padding: 10px 20px; background-color: #0070f3; color: white; text-decoration: none; border-radius: 5px;">Accept Invitation</a>
-    `,
+  const html = await ejs.renderFile(template, {
+    organizationName: invitation.organization.name,
+    role: role,
+    inviteLink: inviteLink,
+    year: new Date().getFullYear(),
   });
 
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: email,
+    subject: `You've been invited to join ${invitation.organization.name}`,
+    html,
+  });
   return {
     message: "Invitation sent successfully!",
     inviteLink,
   };
 };
 const acceptInvitation = async (token: string, userId: string) => {
-    
   const invitation = await prisma.invitation.findUnique({
     where: { token },
+    include: {
+      organization: true,
+    },
   });
 
   if (!invitation) {
@@ -137,6 +146,25 @@ const acceptInvitation = async (token: string, userId: string) => {
     });
 
     return newMember;
+  });
+
+  const template = path.join(
+    process.cwd(),
+    "/src/templates/invitation/invite-accept-tamplets.ejs",
+  );
+
+  const html = await ejs.renderFile(template, {
+    name: user.name || "User",
+    organizationName: invitation.organization.name,
+    role: invitation.role,
+    year: new Date().getFullYear(),
+  });
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: user.email,
+    subject: `Successfully Joined ${invitation.organization.name}! 🎉`,
+    html,
   });
 
   return result;
