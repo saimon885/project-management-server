@@ -9,51 +9,56 @@ declare global {
     interface Request {
       orgId?: string;
       userRole?: string;
+      orgMemberId?: string;
     }
   }
 }
 
 export const checkOrgAccess = () => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const organizationId =
-      req.cookies?.activeOrgId ||
-      (req.headers["x-organization-id"] as string) ||
-      req.body.organizationId;
+    const organizationId = req.params.organizationId;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access.");
+    }
 
     if (!organizationId) {
       throw new AppError(
         httpStatus.BAD_REQUEST,
-        "Organization ID is required in headers or request parameters.",
+        "Organization ID is required.",
       );
     }
-    const userId = req.user?.userId;
 
-    if (!userId) {
-      throw new AppError(
-        httpStatus.UNAUTHORIZED,
-        "Unauthorized access. User information not found.",
-      );
-    }
-    const member = await prisma.organizationMember.findUnique({
+    const member = await prisma.organizationMember.findFirst({
       where: {
-        organizationId_userId: {
-          organizationId,
-          userId,
-        },
+        organizationId,
+        userId,
       },
       include: {
-        organization: true,
+        organization: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
       },
     });
-
-    if (!member) {
+    // console.log(member.);
+    if (!member || !member.status) {
       throw new AppError(
         httpStatus.FORBIDDEN,
-        "Access Denied. You do not belong to this organization or the organization does not exist.",
+        "You are not an active member of this organization.",
       );
     }
-    req.orgId = organizationId;
+
+    // if (!member.organizationId) {
+    //   throw new AppError(httpStatus.FORBIDDEN, "Organization is not active.");
+    // }
+
+    req.orgId = member.organizationId;
     req.userRole = member.role;
+    req.orgMemberId = member.id;
 
     next();
   });

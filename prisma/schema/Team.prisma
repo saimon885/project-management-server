@@ -1,0 +1,21 @@
+model Team {
+    id          String  @id @default(uuid())
+    name        String
+    description String?
+
+    organizationId String
+    createdById    String
+
+    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    createdBy    User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+    members     TeamMember[]
+    invitations Invitation[]
+    projects    Project[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([organizationId, name])
+    @@index([organizationId])
+}

@@ -6,7 +6,13 @@ enum UserRole {
     GUEST
     ADMIN
 }
-
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  ARCHIVED
+}
 enum authProviderName {
     GOOGLE
     CREDENTIALS
@@ -16,4 +22,22 @@ enum userStatus {
     ACTIVE
     BLOCKED
     DELETED
+}
+
+enum TeamRole {
+  TEAM_LEAD
+  MEMBER
+}
+
+enum InvitationScope {
+  ORGANIZATION
+  TEAM
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CANCELLED
 }

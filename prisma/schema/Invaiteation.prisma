@@ -1,20 +1,24 @@
-enum InvitationStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
 model Invitation {
   id             String           @id @default(uuid())
   email          String
-  role            UserRole            @default(MEMBER)
+
+  scope          InvitationScope  @default(ORGANIZATION)
+  role           UserRole?
+
+  teamRole       TeamRole?
+
   organizationId String
-  organization   Organization     @relation(fields: [organizationId], references: [id])
+  teamId         String?
+
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  team           Team?            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
   token          String           @unique
   status         InvitationStatus @default(PENDING)
   expiresAt      DateTime
   createdAt      DateTime         @default(now())
 
+  @@index([organizationId, email, status])
+  @@index([teamId])
   @@map("invitations")
-
 }

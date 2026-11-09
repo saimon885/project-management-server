@@ -1,14 +1,17 @@
 model Organization {
-    id               String   @id @default(uuid())
-    name             String
-    slug             String   @unique
-    logoUrl          String?
+    id              String   @id @default(uuid())
+    name            String
+    slug            String   @unique
+    logoUrl         String?
     logoPublishedID String   @default("")
-    createdAt        DateTime @default(now())
-    updatedAt        DateTime @updatedAt
+    status          Boolean  @default(true)
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
 
-    members OrganizationMember[]
+    members     OrganizationMember[]
+    projects    Project[]
     inviteation Invitation[]
+    team Team[]
 
     @@map("organizations")
 }
