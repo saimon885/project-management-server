@@ -7,6 +7,7 @@ import httpStatus from "http-status";
 import crypto from "crypto";
 import path from "path";
 import ejs from "ejs";
+
 export interface IinviteUserPayload {
   email: string;
   role: UserRole;
@@ -136,7 +137,7 @@ const acceptInvitation = async (token: string, userId: string) => {
       data: {
         organizationId: invitation.organizationId,
         userId: user.id,
-        role: invitation.role,
+        role: invitation.role as UserRole,
       },
     });
 
