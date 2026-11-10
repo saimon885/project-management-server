@@ -10,6 +10,7 @@ import { userRoutes } from "./modules/user/user.routes";
 import { organizationRoutes } from "./modules/organizations/organization.routes";
 import { invitationRoutes } from "./modules/invitation/invitation.routes";
 import { teamRoutes } from "./modules/teams/teams.routes";
+import { teamMemberRoutes } from "./modules/Team-member/teamMember.routes";
 export const app = express();
 
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/organizations", organizationRoutes);
 app.use("/api/v1/invitation", invitationRoutes);
 app.use("/api/v1/teams", teamRoutes);
+app.use("/api/v1/team-member", teamMemberRoutes);
 
 app.use(globalErrorHandler);
 app.use(notFound);

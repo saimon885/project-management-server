@@ -76,6 +76,7 @@ const getOrganization = async () => {
           role: true,
           user: {
             select: {
+              id: true,
               name: true,
               email: true,
               phone_number: true,
