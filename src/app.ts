@@ -12,6 +12,9 @@ import { invitationRoutes } from "./modules/invitation/invitation.routes";
 import { teamRoutes } from "./modules/teams/teams.routes";
 import { teamMemberRoutes } from "./modules/Team-member/teamMember.routes";
 import { projectRoutes } from "./modules/projects/projects.routes";
+import { taskRoutes } from "./modules/task/task.routes";
+import { subTaskRoutes } from "./modules/subTask/subTask.routes";
+import { commentsRoutes } from "./modules/comments/comments.routes";
 export const app = express();
 
 app.use(express.json());
@@ -30,6 +33,9 @@ app.use("/api/v1/invitation", invitationRoutes);
 app.use("/api/v1/teams", teamRoutes);
 app.use("/api/v1/team-member", teamMemberRoutes);
 app.use("/api/v1/projects", projectRoutes);
+app.use("/api/v1/tasks", taskRoutes);
+app.use("/api/v1/subTasks", subTaskRoutes);
+app.use("/api/v1/comments", commentsRoutes);
 
 app.use(globalErrorHandler);
 app.use(notFound);
