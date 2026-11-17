@@ -15,7 +15,7 @@ model Project {
   createdBy      User          @relation(fields: [createdById], references: [id])
 
   // Task & Sprint
-//   tasks          Task[]
+  tasks          Task[]
 //   sprints        Sprint[]
 
   createdAt      DateTime      @default(now())

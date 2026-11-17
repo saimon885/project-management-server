@@ -41,3 +41,18 @@ enum InvitationStatus {
   EXPIRED
   CANCELLED
 }
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+  BLOCKED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}

@@ -1,22 +1,30 @@
 model User {
-    id               String               @id @default(uuid())
-    name             String
-    email            String               @unique
-    password         String?
-    image_url        String               @default("")
-    imagePublishedID String               @default("")
-    phone_number     String?
-    authProvider     authProviderName     @default(CREDENTIALS)
-    status           userStatus           @default(ACTIVE)
-    emailVerified    Boolean              @default(false)
-    googleId         String?              @unique
-    createdAt        DateTime             @default(now())
-    updatedAt        DateTime             @updatedAt
-    organization     OrganizationMember[]
-    project          Project[]
-    teamsCreated     Team[]               @relation("TeamCreatedBy")
-    teamMember       TeamMember[]
+  id               String           @id @default(uuid())
+  name             String
+  email            String           @unique
+  password         String?
+  image_url        String           @default("")
+  imagePublishedID String           @default("")
+  phone_number     String?
+  authProvider     authProviderName @default(CREDENTIALS)
+  status           userStatus       @default(ACTIVE)
+  emailVerified    Boolean          @default(false)
+  googleId         String?          @unique
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
-    @@index([email, password, id])
-    @@map("users")
+  organization     OrganizationMember[]
+  project          Project[]
+  teamsCreated     Team[]           @relation("TeamCreatedBy")
+  teamMember       TeamMember[]
+
+  // Task Relations
+  tasksCreated     Task[]           @relation("TaskCreatedBy")
+  assignedTasks    Task[]           @relation("TaskAssignee")
+
+  // Comment Relations
+  comments         TaskComment[]    @relation("CommentAuthor")
+
+  @@index([email, password, id])
+  @@map("users")
 }
