@@ -60,7 +60,7 @@ const DeleteTask = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpstatus.OK,
     messege: "Task deleted successfully.",
-    data: result,
+    data: null,
   });
 });
 

@@ -1,0 +1,31 @@
+model SubTask {
+    id          String  @id @default(uuid())
+    title       String
+    description String?
+
+    status   TaskStatus   @default(TODO)
+    priority TaskPriority @default(MEDIUM)
+
+    taskId      String
+    createdById String
+    assigneeId  String?
+
+    // Relations
+    task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+    createdBy User @relation("SubTaskCreatedBy", fields: [createdById], references: [id])
+
+    assignee User? @relation("SubTaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+    startDate DateTime?
+    dueDate   DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([taskId])
+    @@index([assigneeId])
+    @@index([status])
+    @@index([priority])
+    @@map("subtasks")
+}

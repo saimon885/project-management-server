@@ -1,13 +1,7 @@
 import httpstatus from "http-status";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
-
-interface ICTaskPayload {
-  title: string;
-  description?: string;
-  status?: "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "DONE" | "BLOCKED";
-  priority?: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
-}
+import { ICTaskPayload } from "./task.interface";
 
 const addTask = async (
   payload: ICTaskPayload,

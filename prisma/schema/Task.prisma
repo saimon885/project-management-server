@@ -9,11 +9,6 @@ model Task {
   projectId   String
   createdById String
   assigneeId  String?
-
-  // Parent Task / Subtask
-  parentTaskId String?
-
-  // Sprint
   sprintId    String?
 
   // Relations
@@ -23,11 +18,7 @@ model Task {
 
   assignee    User?   @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
 
-  parentTask  Task?   @relation("TaskSubtasks", fields: [parentTaskId], references: [id], onDelete: SetNull)
-
-  subtasks    Task[]  @relation("TaskSubtasks")
-
-//   sprint      Sprint? @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  subtasks    SubTask[]
 
   comments    TaskComment[]
 
@@ -39,7 +30,6 @@ model Task {
 
   @@index([projectId])
   @@index([assigneeId])
-  @@index([parentTaskId])
   @@index([sprintId])
   @@index([status])
   @@index([priority])

@@ -13,17 +13,21 @@ model User {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
-  organization     OrganizationMember[]
-  project          Project[]
-  teamsCreated     Team[]           @relation("TeamCreatedBy")
-  teamMember       TeamMember[]
+  organization OrganizationMember[]
+  project      Project[]
+  teamsCreated Team[]               @relation("TeamCreatedBy")
+  teamMember   TeamMember[]
 
   // Task Relations
-  tasksCreated     Task[]           @relation("TaskCreatedBy")
-  assignedTasks    Task[]           @relation("TaskAssignee")
+  tasksCreated  Task[] @relation("TaskCreatedBy")
+  assignedTasks Task[] @relation("TaskAssignee")
+
+  // SubTask Relations
+  subTasksCreated  SubTask[] @relation("SubTaskCreatedBy")
+  assignedSubTasks SubTask[] @relation("SubTaskAssignee")
 
   // Comment Relations
-  comments         TaskComment[]    @relation("CommentAuthor")
+  comments TaskComment[] @relation("CommentAuthor")
 
   @@index([email, password, id])
   @@map("users")
