@@ -96,8 +96,44 @@ const getTask = async (projectId: string) => {
   return result;
 };
 
-const updateTask = async () => {};
-const deleteTask = async () => {};
+const updateTask = async (payload: ICTaskPayload, taskId: string) => {
+  const checkTask = await prisma.task.findUnique({
+    where: {
+      id: taskId,
+    },
+  });
+  if (!checkTask) {
+    throw new AppError(httpstatus.NOT_FOUND, "task not found");
+  }
+  const result = await prisma.task.update({
+    where: {
+      id: taskId,
+    },
+    data: {
+      title: payload.title,
+      description: payload.description,
+      status: payload.status,
+      priority: payload.priority,
+    },
+  });
+  return result;
+};
+const deleteTask = async (taskId: string) => {
+  const checkTask = await prisma.task.findUnique({
+    where: {
+      id: taskId,
+    },
+  });
+  if (!checkTask) {
+    throw new AppError(httpstatus.NOT_FOUND, "task not found");
+  }
+  const result = await prisma.task.delete({
+    where: {
+      id: taskId,
+    },
+  });
+  return result;
+};
 
 export const taskService = {
   addTask,

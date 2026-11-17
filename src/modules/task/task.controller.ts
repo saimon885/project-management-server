@@ -38,19 +38,29 @@ const getTask = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const updateTask = catchAsync(async (req: Request, res: Response) => {
+  const { taskId } = req.params;
+  if (!taskId) {
+    throw new AppError(httpstatus.BAD_REQUEST, "taskId is required");
+  }
+  const result = await taskService.updateTask(req.body, taskId as string);
   sendResponse(res, {
     success: true,
     statusCode: httpstatus.OK,
-    messege: "all project retrive successfull.",
-    data: "result",
+    messege: "Task updated successfully.",
+    data: result,
   });
 });
 const DeleteTask = catchAsync(async (req: Request, res: Response) => {
+  const { taskId } = req.params;
+  if (!taskId) {
+    throw new AppError(httpstatus.BAD_REQUEST, "taskId is required");
+  }
+  const result = await taskService.deleteTask(taskId as string);
   sendResponse(res, {
     success: true,
     statusCode: httpstatus.OK,
-    messege: "all project retrive successfull.",
-    data: "result",
+    messege: "Task deleted successfully.",
+    data: result,
   });
 });
 
