@@ -7,11 +7,7 @@ import httpStatus from "http-status";
 import crypto from "crypto";
 import path from "path";
 import ejs from "ejs";
-
-export interface IinviteUserPayload {
-	email: string;
-	role: UserRole;
-}
+import type { IinviteUserPayload } from "./invitation.interface";
 
 const sendInvitation = async (payload: IinviteUserPayload, orgId: string) => {
 	console.log(orgId);

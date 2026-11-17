@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("welcome to project management!");
+	res.send("welcome to project management!");
 });
 
 app.use("/api/v1/auth", authRoutes);

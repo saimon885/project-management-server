@@ -1,11 +1,7 @@
 import httpStatus from "http-status";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
-
-interface IInviteTeamPayload {
-	userId: string;
-	role?: "TEAM_LEAD" | "MEMBER";
-}
+import type { IInviteTeamPayload } from "./teamMember.interface";
 
 const inviteTeam = async (
 	payload: IInviteTeamPayload,

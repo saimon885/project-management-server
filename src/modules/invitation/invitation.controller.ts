@@ -3,6 +3,7 @@ import { catchAsync } from "../../utility/catchAsync";
 import { sendResponse } from "../../utility/sendResponse";
 import httpStatus from "http-status";
 import { invitationService } from "./invitation.service";
+
 const InviteUser = catchAsync(async (req: Request, res: Response) => {
 	const result = await invitationService.sendInvitation(
 		req.body,

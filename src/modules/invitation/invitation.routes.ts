@@ -2,6 +2,8 @@ import { Router } from "express";
 import { invitationController } from "./invitation.controller";
 import { auth } from "../../middleware/checkAuth";
 import { checkOrgAccess } from "../../middleware/checkOrgAccess";
+import { validationRequest } from "../../middleware/validationRequest";
+import { invitationValidation } from "./invitation.validation";
 
 const router = Router();
 
@@ -9,6 +11,7 @@ router.post(
 	"/invite/:orgId",
 	auth(),
 	checkOrgAccess(),
+	validationRequest(invitationValidation.zInviteUserPayload),
 	invitationController.InviteUser,
 );
 router.post(

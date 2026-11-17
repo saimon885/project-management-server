@@ -3,6 +3,8 @@ import { auth } from "../../middleware/checkAuth";
 import { checkOrgAccess } from "../../middleware/checkOrgAccess";
 import { requireOrgRole } from "../../middleware/org-role";
 import { teamController } from "./teams.controller";
+import { validationRequest } from "../../middleware/validationRequest";
+import { teamsValidation } from "./teams.validation";
 
 const router = Router();
 
@@ -11,6 +13,7 @@ router.post(
 	auth(),
 	checkOrgAccess(),
 	requireOrgRole("ORGANIZATION_OWNER", "ADMIN", "MANAGER"),
+	validationRequest(teamsValidation.zteamSchema),
 	teamController.CreateTeam,
 );
 
