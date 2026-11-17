@@ -15,6 +15,7 @@ import { taskRoutes } from "./modules/task/task.routes";
 import { subTaskRoutes } from "./modules/subTask/subTask.routes";
 import { commentsRoutes } from "./modules/comments/comments.routes";
 import { sprintRoutes } from "./modules/sprints/sprints.routes";
+import { taskAssignRoutes } from "./modules/taskAssign/task-assign.routes";
 export const app = express();
 
 app.use(express.json());
@@ -37,6 +38,7 @@ app.use("/api/v1/sprints", sprintRoutes);
 app.use("/api/v1/tasks", taskRoutes);
 app.use("/api/v1/subTasks", subTaskRoutes);
 app.use("/api/v1/comments", commentsRoutes);
+app.use("/api/v1/task-assign", taskAssignRoutes);
 
 app.use(globalErrorHandler);
 app.use(notFound);
