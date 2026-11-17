@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { type Request, type Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import config from "./config";
@@ -14,6 +14,7 @@ import { projectRoutes } from "./modules/projects/projects.routes";
 import { taskRoutes } from "./modules/task/task.routes";
 import { subTaskRoutes } from "./modules/subTask/subTask.routes";
 import { commentsRoutes } from "./modules/comments/comments.routes";
+import { sprintRoutes } from "./modules/sprints/sprints.routes";
 export const app = express();
 
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use("/api/v1/invitation", invitationRoutes);
 app.use("/api/v1/teams", teamRoutes);
 app.use("/api/v1/team-member", teamMemberRoutes);
 app.use("/api/v1/projects", projectRoutes);
+app.use("/api/v1/sprints", sprintRoutes);
 app.use("/api/v1/tasks", taskRoutes);
 app.use("/api/v1/subTasks", subTaskRoutes);
 app.use("/api/v1/comments", commentsRoutes);

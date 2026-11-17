@@ -28,6 +28,10 @@ model User {
 
   // Comment Relations
   comments TaskComment[] @relation("CommentAuthor")
+  sprints  Sprint[]
+
+  taskAssignmentsReceived TaskAssignment[] @relation("TaskAssignedTo")
+  taskAssignmentsMade     TaskAssignment[] @relation("TaskAssignedBy")
 
   @@index([email, password, id])
   @@map("users")

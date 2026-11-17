@@ -5,8 +5,8 @@ import { auth } from "../../middleware/checkAuth";
 const router = Router();
 router.post("/:teamId/team", auth(), teamMemberController.inviteTeam);
 router.get(
-  "/:teamId/team-member",
-  auth(),
-  teamMemberController.getAllTeamMember,
+	"/:teamId/team-member",
+	auth(),
+	teamMemberController.getAllTeamMember,
 );
 export const teamMemberRoutes = router;

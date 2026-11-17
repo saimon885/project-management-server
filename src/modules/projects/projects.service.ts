@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
-import { createProjectPayload } from "./project.interface";
+import type { createProjectPayload } from "./project.interface";
 
 const CreateProject = async (
   payload: createProjectPayload,
@@ -67,6 +67,17 @@ const getAllProject = async (orgId: string) => {
   const result = await prisma.project.findMany({
     where: {
       organizationId: orgId,
+    },
+    include: {
+      sprints: {
+        select: {
+          name: true,
+          startDate: true,
+          endDate: true,
+          status: true,
+          goal: true,
+        },
+      },
     },
   });
   if (!result) {

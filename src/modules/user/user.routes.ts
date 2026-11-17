@@ -8,10 +8,10 @@ const router = Router();
 router.get("/me", auth(), userController.getMyProfile);
 router.get("/all-users", auth(UserRole.ADMIN), userController.getAllUsers);
 router.patch(
-  "/update-profile",
-  auth(),
-  upload.single("profileImage"),
-  userController.updateMyProfile,
+	"/update-profile",
+	auth(),
+	upload.single("profileImage"),
+	userController.updateMyProfile,
 );
 
 export const userRoutes = router;

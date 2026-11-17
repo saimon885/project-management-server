@@ -1,11 +1,12 @@
 enum UserRole {
-    ORGANIZATION_OWNER
-    MANAGER
-    TEAM_MEMBER
-    MEMBER
-    GUEST
-    ADMIN
+  ORGANIZATION_OWNER
+  MANAGER
+  TEAM_MEMBER
+  MEMBER
+  GUEST
+  ADMIN
 }
+
 enum ProjectStatus {
   PLANNING
   ACTIVE
@@ -13,15 +14,16 @@ enum ProjectStatus {
   COMPLETED
   ARCHIVED
 }
+
 enum authProviderName {
-    GOOGLE
-    CREDENTIALS
+  GOOGLE
+  CREDENTIALS
 }
 
 enum userStatus {
-    ACTIVE
-    BLOCKED
-    DELETED
+  ACTIVE
+  BLOCKED
+  DELETED
 }
 
 enum TeamRole {
@@ -55,4 +57,11 @@ enum TaskPriority {
   MEDIUM
   HIGH
   URGENT
+}
+
+enum SprintStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
 }

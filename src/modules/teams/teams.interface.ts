@@ -1,4 +1,4 @@
 export interface ICreateTeamPayload {
-  name: string;
-  description?: string;
+	name: string;
+	description?: string;
 }

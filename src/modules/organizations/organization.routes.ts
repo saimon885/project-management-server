@@ -6,10 +6,10 @@ import { auth } from "../../middleware/checkAuth";
 const router = Router();
 
 router.post(
-  "/",
-  auth(),
-  upload.single("logoUrl"),
-  organizationController.createOrganization,
+	"/",
+	auth(),
+	upload.single("logoUrl"),
+	organizationController.createOrganization,
 );
 
 router.get("/org", auth(), organizationController.getOrganization);

@@ -7,17 +7,17 @@ import { teamController } from "./teams.controller";
 const router = Router();
 
 router.post(
-  "/:organizationId",
-  auth(),
-  checkOrgAccess(),
-  requireOrgRole("ORGANIZATION_OWNER", "ADMIN", "MANAGER"),
-  teamController.CreateTeam,
+	"/:organizationId",
+	auth(),
+	checkOrgAccess(),
+	requireOrgRole("ORGANIZATION_OWNER", "ADMIN", "MANAGER"),
+	teamController.CreateTeam,
 );
 
 router.get(
-  "/:organizationId/get",
-  auth(),
-  checkOrgAccess(),
-  teamController.getTeam,
+	"/:organizationId/get",
+	auth(),
+	checkOrgAccess(),
+	teamController.getTeam,
 );
 export const teamRoutes = router;

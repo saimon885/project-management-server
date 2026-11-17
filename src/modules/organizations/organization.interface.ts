@@ -1,4 +1,4 @@
 export interface organizationPayload {
-  name: string;
-  slug: string;
+	name: string;
+	slug: string;
 }

@@ -6,21 +6,21 @@ import { requireOrgRole } from "../../middleware/org-role";
 
 const router = Router();
 router.post(
-  "/:organizationId/projects",
-  auth(),
-  checkOrgAccess(),
-  requireOrgRole("ORGANIZATION_OWNER"),
-  projectController.CreateProject,
+	"/:organizationId/projects",
+	auth(),
+	checkOrgAccess(),
+	requireOrgRole("ORGANIZATION_OWNER"),
+	projectController.CreateProject,
 );
 router.get(
-  "/:organizationId",
-  auth(),
-  checkOrgAccess(),
-  projectController.getAllProject,
+	"/:organizationId",
+	auth(),
+	checkOrgAccess(),
+	projectController.getAllProject,
 );
 router.get(
-  "/:projectId/project-details",
-  auth(),
-  projectController.getSingleProject,
+	"/:projectId/project-details",
+	auth(),
+	projectController.getSingleProject,
 );
 export const projectRoutes = router;
