@@ -23,12 +23,23 @@ const AssignTask = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 const ReassignTask = catchAsync(async (req: Request, res: Response) => {
+  const { taskId } = req.params;
+  if (!taskId) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Task ID is required");
+  }
+  const userId = req.user?.userId;
+  const result = await taskAssignService.reassignTask(
+    req.body,
+    taskId as string,
+    userId as string,
+  );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     messege: "Task reassigned successfully.",
-    data: "result",
+    data: result,
   });
 });
 
@@ -48,18 +59,8 @@ const assignHistory = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateAssignTask = catchAsync(async (req: Request, res: Response) => {
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.CREATED,
-    messege: "Task assignment updated successfully.",
-    data: "result",
-  });
-});
-
 export const taskAssignController = {
   AssignTask,
   ReassignTask,
   assignHistory,
-  updateAssignTask,
 };

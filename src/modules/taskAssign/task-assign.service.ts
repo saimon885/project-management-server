@@ -95,6 +95,74 @@ const assignTask = async (
 
   return result;
 };
+const reassignTask = async (
+  payload: TaskAssignService,
+  taskId: string,
+  userId: string,
+) => {
+  const checkTask = await prisma.task.findUnique({
+    where: { id: taskId },
+    include: {
+      project: true,
+    },
+  });
+
+  if (!checkTask) {
+    throw new AppError(httpStatus.NOT_FOUND, "Task not found.");
+  }
+
+  if (!checkTask.assigneeId) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This task is not assigned yet. Use assign instead.",
+    );
+  }
+
+  if (checkTask.assigneeId === payload.assignedToId) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      "Task is already assigned to this user.",
+    );
+  }
+
+  const checkOrgMember = await prisma.organizationMember.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId: checkTask.project.organizationId,
+        userId,
+      },
+    },
+  });
+
+  if (!checkOrgMember) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not a member of this organization.",
+    );
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.task.update({
+      where: { id: taskId },
+      data: {
+        assigneeId: payload.assignedToId,
+      },
+    });
+
+    const taskAssignment = await tx.taskAssignment.create({
+      data: {
+        taskId,
+        assignedToId: payload.assignedToId,
+        assignedById: userId,
+      },
+    });
+
+    return taskAssignment;
+  });
+
+  return result;
+};
+
 const getTaskAssignmentHistory = async (taskId: string) => {
   const checkTask = await prisma.task.findMany({
     where: {
@@ -118,4 +186,5 @@ const getTaskAssignmentHistory = async (taskId: string) => {
 export const taskAssignService = {
   assignTask,
   getTaskAssignmentHistory,
+  reassignTask,
 };
