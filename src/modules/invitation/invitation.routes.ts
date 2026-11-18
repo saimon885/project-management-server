@@ -8,17 +8,17 @@ import { invitationValidation } from "./invitation.validation";
 const router = Router();
 
 router.post(
-	"/invite/:orgId",
-	auth(),
-	checkOrgAccess(),
-	validationRequest(invitationValidation.zInviteUserPayload),
-	invitationController.InviteUser,
+  "/invite/:organizationId",
+  auth(),
+  checkOrgAccess(),
+  validationRequest(invitationValidation.zInviteUserPayload),
+  invitationController.InviteUser,
 );
 router.post(
-	"/accept-invite/:token",
-	auth(),
-	//   checkOrgAccess(),
-	invitationController.acceptedInvite,
+  "/accept-invite/:token",
+  auth(),
+  //   checkOrgAccess(),
+  invitationController.acceptedInvite,
 );
 
 export const invitationRoutes = router;

@@ -65,3 +65,16 @@ enum SprintStatus {
   COMPLETED
   CANCELLED
 }
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+  BUSINESS
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELED
+  PAST_DUE
+}

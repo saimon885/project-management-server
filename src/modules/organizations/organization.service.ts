@@ -7,92 +7,98 @@ import httpStatus from "http-status";
 import { cloudinary } from "../../lib/cloudinary";
 
 const CreateOrganization = async (
-	payload: organizationPayload,
-	buffer: Buffer | undefined,
-	userId: string,
+  payload: organizationPayload,
+  buffer: Buffer | undefined,
+  userId: string,
 ) => {
-	const existingOrganization = await prisma.organization.findFirst({
-		where: {
-			OR: [{ name: payload.name }, { slug: payload.slug }],
-		},
-		select: {
-			logoPublishedID: true,
-		},
-	});
-	if (existingOrganization) {
-		throw new AppError(httpStatus.CONFLICT, "organization already exist.");
-	}
-	let cloudinaryResult: UploadApiResponse | null = null;
-	if (buffer) {
-		cloudinaryResult = await new Promise<UploadApiResponse>(
-			(resolve, reject) => {
-				cloudinary.uploader
-					.upload_stream({ resource_type: "auto" }, (error, result) => {
-						if (error) {
-							return reject(
-								new AppError(
-									httpStatus.INTERNAL_SERVER_ERROR,
-									"Failed to upload image to Cloudinary",
-								),
-							);
-						}
+  const existingOrganization = await prisma.organization.findFirst({
+    where: {
+      OR: [{ name: payload.name }, { slug: payload.slug }],
+    },
+    select: {
+      logoPublishedID: true,
+    },
+  });
+  if (existingOrganization) {
+    throw new AppError(httpStatus.CONFLICT, "organization already exist.");
+  }
+  let cloudinaryResult: UploadApiResponse | null = null;
+  if (buffer) {
+    cloudinaryResult = await new Promise<UploadApiResponse>(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ resource_type: "auto" }, (error, result) => {
+            if (error) {
+              return reject(
+                new AppError(
+                  httpStatus.INTERNAL_SERVER_ERROR,
+                  "Failed to upload image to Cloudinary",
+                ),
+              );
+            }
 
-						if (!result) {
-							return reject(
-								new AppError(
-									httpStatus.INTERNAL_SERVER_ERROR,
-									"No result returned from Cloudinary upload",
-								),
-							);
-						}
-						resolve(result);
-					})
-					.end(buffer);
-			},
-		);
-	}
+            if (!result) {
+              return reject(
+                new AppError(
+                  httpStatus.INTERNAL_SERVER_ERROR,
+                  "No result returned from Cloudinary upload",
+                ),
+              );
+            }
+            resolve(result);
+          })
+          .end(buffer);
+      },
+    );
+  }
 
-	const result = await prisma.organization.create({
-		data: {
-			name: payload.name,
-			slug: payload.slug,
-			logoUrl: cloudinaryResult?.secure_url,
-			logoPublishedID: cloudinaryResult?.public_id,
-			members: {
-				create: { role: UserRole.ORGANIZATION_OWNER, userId: userId },
-			},
-		},
-		include: {
-			members: true,
-		},
-	});
-	return result;
+  const result = await prisma.organization.create({
+    data: {
+      name: payload.name,
+      slug: payload.slug,
+      logoUrl: cloudinaryResult?.secure_url,
+      logoPublishedID: cloudinaryResult?.public_id,
+      members: {
+        create: { role: UserRole.ORGANIZATION_OWNER, userId: userId },
+      },
+      subscription: {
+        create: {
+          plan: "FREE",
+          status: "ACTIVE",
+        },
+      },
+    },
+    include: {
+      members: true,
+    },
+  });
+  return result;
 };
 const getOrganization = async () => {
-	const result = await prisma.organization.findMany({
-		include: {
-			members: {
-				select: {
-					role: true,
-					user: {
-						select: {
-							id: true,
-							name: true,
-							email: true,
-							phone_number: true,
-						},
-					},
-				},
-			},
-		},
-	});
-	if (!result) {
-		new AppError(httpStatus.NOT_FOUND, "organization not found!");
-	}
-	return result;
+  const result = await prisma.organization.findMany({
+    include: {
+      members: {
+        select: {
+          role: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone_number: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!result) {
+    new AppError(httpStatus.NOT_FOUND, "organization not found!");
+  }
+  return result;
 };
 
 export const organizationService = {
-	CreateOrganization,
-	getOrganization,
+  CreateOrganization,
+  getOrganization,
 };
