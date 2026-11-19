@@ -12,6 +12,7 @@ model Organization {
     projects        Project[]
     inviteation     Invitation[]
     team            Team[]
+    payment Payment[]
 
     @@map("organizations")
 }

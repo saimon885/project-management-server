@@ -16,6 +16,8 @@ import { subTaskRoutes } from "./modules/subTask/subTask.routes";
 import { commentsRoutes } from "./modules/comments/comments.routes";
 import { sprintRoutes } from "./modules/sprints/sprints.routes";
 import { taskAssignRoutes } from "./modules/taskAssign/task-assign.routes";
+import { getBkashIdToken } from "./lib/bkash";
+import { bkashPaymentRoutes } from "./modules/bkashPayment/bkashPayment.routes";
 export const app = express();
 
 app.use(express.json());
@@ -23,8 +25,10 @@ app.use(cors({ origin: config.app_url, credentials: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get("/", (req: Request, res: Response) => {
-	res.send("welcome to project management!");
+app.get("/", async (req: Request, res: Response) => {
+  const getnIdtokenResult = await getBkashIdToken();
+  console.log(getnIdtokenResult);
+  res.send("welcome to project management!");
 });
 
 app.use("/api/v1/auth", authRoutes);
@@ -39,6 +43,7 @@ app.use("/api/v1/tasks", taskRoutes);
 app.use("/api/v1/subTasks", subTaskRoutes);
 app.use("/api/v1/comments", commentsRoutes);
 app.use("/api/v1/task-assign", taskAssignRoutes);
+app.use("/api/v1/payments", bkashPaymentRoutes);
 
 app.use(globalErrorHandler);
 app.use(notFound);

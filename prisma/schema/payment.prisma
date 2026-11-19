@@ -1,0 +1,43 @@
+
+model Payment {
+  id             String   @id @default(uuid())
+
+  organizationId String
+  userId         String
+
+  organization   Organization @relation(fields: [organizationId],references: [id],onDelete:Restrict )
+
+  paidBy         User @relation( fields: [userId], references: [id],onDelete: Restrict)
+
+  // Subscription information
+  plan           SubscriptionPlan
+  durationDays   Int
+
+  // Payment information
+  amount         Decimal @db.Decimal(10, 2)
+  currency       String  @default("BDT")
+
+  provider       PaymentProvider @default(BKASH)
+  status         PaymentStatus   @default(PENDING)
+
+  // bKash information
+  merchantInvoiceNumber String  @unique
+  bkashPaymentID        String? @unique
+  bkashTrxID            String? @unique
+
+  // Payment lifecycle
+  failureReason String?
+  paidAt        DateTime?
+
+  // Subscription period applied by this payment
+  subscriptionStartAt DateTime?
+  subscriptionEndAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([userId])
+  @@map("payments")
+}

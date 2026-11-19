@@ -78,3 +78,17 @@ enum SubscriptionStatus {
   CANCELED
   PAST_DUE
 }
+enum PaymentStatus {
+  PENDING
+  INITIATED
+  COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  BKASH
+  STRIPE
+  
+}
