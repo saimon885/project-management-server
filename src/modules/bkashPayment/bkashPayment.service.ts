@@ -1,23 +1,25 @@
 import { UserPayload } from "../../middleware/checkAuth";
-import { SUBSCRIPTION_PLANS } from "../../utility/subscription";
+import { BILLING_CYCLE, SUBSCRIPTION_PLANS } from "../../utility/subscription";
 import httpStatus from "http-status";
 import { AppError } from "../../utility/AppError";
 import { PaymentCreatePayload } from "./bkashPayment.interface";
 import { getBkashIdToken } from "../../lib/bkash";
 import { prisma } from "../../lib/prisma";
 import config from "../../config";
+import crypto from "crypto";
 
 const createPayment = async (
   payload: PaymentCreatePayload,
   orgId: string,
   user: UserPayload,
 ) => {
-    
   const { plan, billingCycle } = payload;
-  const selectedPlan = SUBSCRIPTION_PLANS[plan];
-  console.log(selectedPlan);
-
   const bkashIdToken = await getBkashIdToken();
+
+  const selectedPlan = SUBSCRIPTION_PLANS[plan];
+  const durationMonths = BILLING_CYCLE[billingCycle];
+
+  const durationDays = durationMonths * 30;
   if (!bkashIdToken) {
     throw new AppError(
       httpStatus.INTERNAL_SERVER_ERROR,
@@ -65,6 +67,7 @@ const createPayment = async (
   if (amount <= 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid subscription amount");
   }
+  const merchantInvoiceNumber = `INV-${crypto.randomUUID()}`;
   const bkashCreatePayment = await fetch(
     `${config.bkash_base_url}/tokenized/checkout/create`,
     {
@@ -83,7 +86,7 @@ const createPayment = async (
         amount: amount,
         currency: "BDT",
         intent: "sale",
-        merchantInvoiceNumber: orgId,
+        merchantInvoiceNumber,
       }),
     },
   );
@@ -105,7 +108,23 @@ const createPayment = async (
       bkashPaymentResult.statusMessage || "bKash Payment Creation Failed",
     );
   }
-  return bkashPaymentResult;
+  const transactionResult = await prisma.$transaction(async (tx) => {
+    await tx.payment.create({
+      data: {
+        organizationId: organization.id,
+        amount: Number(amount),
+        merchantInvoiceNumber,
+        bkashPaymentID: bkashPaymentResult.paymentID,
+        userId: user.userId,
+        plan,
+        durationDays: Number(durationDays),
+      },
+    });
+    return {
+      paymentUrl: bkashPaymentResult.bkashURL,
+    };
+  });
+  return transactionResult;
 };
 
 export const bkashPaymentService = {
