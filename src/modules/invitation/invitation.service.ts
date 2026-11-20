@@ -11,208 +11,208 @@ import type { IinviteUserPayload } from "./invitation.interface";
 import { SUBSCRIPTION_PLANS } from "../../utility/subscription";
 
 const sendInvitation = async (payload: IinviteUserPayload, orgId: string) => {
-  const { email, role } = payload;
+	const { email, role } = payload;
 
-  // 1. Check existing user
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
+	// 1. Check existing user
+	const existingUser = await prisma.user.findUnique({
+		where: { email },
+	});
 
-  if (existingUser) {
-    const isMember = await prisma.organizationMember.findUnique({
-      where: {
-        organizationId_userId: {
-          organizationId: orgId,
-          userId: existingUser.id,
-        },
-      },
-    });
+	if (existingUser) {
+		const isMember = await prisma.organizationMember.findUnique({
+			where: {
+				organizationId_userId: {
+					organizationId: orgId,
+					userId: existingUser.id,
+				},
+			},
+		});
 
-    if (isMember) {
-      throw new AppError(
-        httpStatus.CONFLICT,
-        "This user is already a member of this organization!",
-      );
-    }
-  }
+		if (isMember) {
+			throw new AppError(
+				httpStatus.CONFLICT,
+				"This user is already a member of this organization!",
+			);
+		}
+	}
 
-  // 2. Check pending invitation
-  const pendingInvite = await prisma.invitation.findFirst({
-    where: {
-      organizationId: orgId,
-      email,
-      status: "PENDING",
-      expiresAt: { gt: new Date() },
-    },
-  });
+	// 2. Check pending invitation
+	const pendingInvite = await prisma.invitation.findFirst({
+		where: {
+			organizationId: orgId,
+			email,
+			status: "PENDING",
+			expiresAt: { gt: new Date() },
+		},
+	});
 
-  if (pendingInvite) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      "An active invitation has already been sent to this email!",
-    );
-  }
+	if (pendingInvite) {
+		throw new AppError(
+			httpStatus.CONFLICT,
+			"An active invitation has already been sent to this email!",
+		);
+	}
 
-  // 3. Get organization subscription
-  const subscription = await prisma.organizationSubscription.findUnique({
-    where: {
-      organizationId: orgId,
-    },
-  });
+	// 3. Get organization subscription
+	const subscription = await prisma.organizationSubscription.findUnique({
+		where: {
+			organizationId: orgId,
+		},
+	});
 
-  if (!subscription || subscription.status !== "ACTIVE") {
-    throw new AppError(
-      httpStatus.FORBIDDEN,
-      "Your organization does not have an active subscription!",
-    );
-  }
+	if (!subscription || subscription.status !== "ACTIVE") {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"Your organization does not have an active subscription!",
+		);
+	}
 
-  // 4. Get invitation limit based on plan
-  const planLimit = SUBSCRIPTION_PLANS[subscription.plan];
+	// 4. Get invitation limit based on plan
+	const planLimit = SUBSCRIPTION_PLANS[subscription.plan];
 
-  // 5. Count total invitations
-  const totalInvitations = await prisma.invitation.count({
-    where: {
-      organizationId: orgId,
-    },
-  });
+	// 5. Count total invitations
+	const totalInvitations = await prisma.invitation.count({
+		where: {
+			organizationId: orgId,
+		},
+	});
 
-  // 6. Check invitation limit
-  if (totalInvitations >= planLimit.invitationLimit) {
-    throw new AppError(
-      httpStatus.PAYMENT_REQUIRED,
-      `Your ${subscription.plan} plan allows only ${planLimit.invitationLimit} invitations. Please upgrade your subscription.`,
-    );
-  }
+	// 6. Check invitation limit
+	if (totalInvitations >= planLimit.invitationLimit) {
+		throw new AppError(
+			httpStatus.PAYMENT_REQUIRED,
+			`Your ${subscription.plan} plan allows only ${planLimit.invitationLimit} invitations. Please upgrade your subscription.`,
+		);
+	}
 
-  // 7. Create invitation
-  const token = crypto.randomBytes(32).toString("hex");
+	// 7. Create invitation
+	const token = crypto.randomBytes(32).toString("hex");
 
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+	const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  const invitation = await prisma.invitation.create({
-    data: {
-      organizationId: orgId,
-      email,
-      role,
-      token,
-      expiresAt,
-    },
-    include: {
-      organization: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
+	const invitation = await prisma.invitation.create({
+		data: {
+			organizationId: orgId,
+			email,
+			role,
+			token,
+			expiresAt,
+		},
+		include: {
+			organization: {
+				select: {
+					name: true,
+				},
+			},
+		},
+	});
 
-  // 8. Generate invitation email
-  const template = path.join(
-    process.cwd(),
-    "/src/templates/invitation/invite-send-tamplates.ejs",
-  );
+	// 8. Generate invitation email
+	const template = path.join(
+		process.cwd(),
+		"/src/templates/invitation/invite-send-tamplates.ejs",
+	);
 
-  const inviteLink = `${config.app_url}/accept-invite?token=${token}`;
+	const inviteLink = `${config.app_url}/accept-invite?token=${token}`;
 
-  const html = await ejs.renderFile(template, {
-    organizationName: invitation.organization.name,
-    role: role,
-    inviteLink: inviteLink,
-    year: new Date().getFullYear(),
-  });
+	const html = await ejs.renderFile(template, {
+		organizationName: invitation.organization.name,
+		role: role,
+		inviteLink: inviteLink,
+		year: new Date().getFullYear(),
+	});
 
-  // 9. Send email
-  await transporter.sendMail({
-    from: config.email_sender,
-    to: email,
-    subject: `You've been invited to join ${invitation.organization.name}`,
-    html,
-  });
+	// 9. Send email
+	await transporter.sendMail({
+		from: config.email_sender,
+		to: email,
+		subject: `You've been invited to join ${invitation.organization.name}`,
+		html,
+	});
 
-  return {
-    message: "Invitation sent successfully!",
-    inviteLink,
-  };
+	return {
+		message: "Invitation sent successfully!",
+		inviteLink,
+	};
 };
 
 const acceptInvitation = async (token: string, userId: string) => {
-  const invitation = await prisma.invitation.findUnique({
-    where: { token },
-    include: {
-      organization: true,
-    },
-  });
+	const invitation = await prisma.invitation.findUnique({
+		where: { token },
+		include: {
+			organization: true,
+		},
+	});
 
-  if (!invitation) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      "Invalid or expired invitation token!",
-    );
-  }
-  if (invitation.status !== "PENDING") {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "This invitation has already been processed!",
-    );
-  }
+	if (!invitation) {
+		throw new AppError(
+			httpStatus.NOT_FOUND,
+			"Invalid or expired invitation token!",
+		);
+	}
+	if (invitation.status !== "PENDING") {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"This invitation has already been processed!",
+		);
+	}
 
-  if (new Date() > invitation.expiresAt) {
-    await prisma.invitation.update({
-      where: { id: invitation.id },
-      data: { status: "REJECTED" },
-    });
-    throw new AppError(httpStatus.BAD_REQUEST, "This invitation has expired!");
-  }
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
+	if (new Date() > invitation.expiresAt) {
+		await prisma.invitation.update({
+			where: { id: invitation.id },
+			data: { status: "REJECTED" },
+		});
+		throw new AppError(httpStatus.BAD_REQUEST, "This invitation has expired!");
+	}
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+	});
 
-  if (!user || user.email !== invitation.email) {
-    throw new AppError(
-      httpStatus.FORBIDDEN,
-      "This invitation was not sent to your account email!",
-    );
-  }
-  const result = await prisma.$transaction(async (tx) => {
-    const newMember = await tx.organizationMember.create({
-      data: {
-        organizationId: invitation.organizationId,
-        userId: user.id,
-        role: invitation.role as UserRole,
-      },
-    });
+	if (!user || user.email !== invitation.email) {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"This invitation was not sent to your account email!",
+		);
+	}
+	const result = await prisma.$transaction(async (tx) => {
+		const newMember = await tx.organizationMember.create({
+			data: {
+				organizationId: invitation.organizationId,
+				userId: user.id,
+				role: invitation.role as UserRole,
+			},
+		});
 
-    await tx.invitation.update({
-      where: { id: invitation.id },
-      data: { status: "ACCEPTED" },
-    });
+		await tx.invitation.update({
+			where: { id: invitation.id },
+			data: { status: "ACCEPTED" },
+		});
 
-    return newMember;
-  });
+		return newMember;
+	});
 
-  const template = path.join(
-    process.cwd(),
-    "/src/templates/invitation/invite-accept-tamplets.ejs",
-  );
+	const template = path.join(
+		process.cwd(),
+		"/src/templates/invitation/invite-accept-tamplets.ejs",
+	);
 
-  const html = await ejs.renderFile(template, {
-    name: user.name || "User",
-    organizationName: invitation.organization.name,
-    role: invitation.role,
-    year: new Date().getFullYear(),
-  });
+	const html = await ejs.renderFile(template, {
+		name: user.name || "User",
+		organizationName: invitation.organization.name,
+		role: invitation.role,
+		year: new Date().getFullYear(),
+	});
 
-  await transporter.sendMail({
-    from: config.email_sender,
-    to: user.email,
-    subject: `Successfully Joined ${invitation.organization.name}! 🎉`,
-    html,
-  });
+	await transporter.sendMail({
+		from: config.email_sender,
+		to: user.email,
+		subject: `Successfully Joined ${invitation.organization.name}! 🎉`,
+		html,
+	});
 
-  return result;
+	return result;
 };
 export const invitationService = {
-  sendInvitation,
-  acceptInvitation,
+	sendInvitation,
+	acceptInvitation,
 };

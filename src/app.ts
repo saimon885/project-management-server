@@ -26,9 +26,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/", async (req: Request, res: Response) => {
-  const getnIdtokenResult = await getBkashIdToken();
-  console.log(getnIdtokenResult);
-  res.send("welcome to project management!");
+	// const getnIdtokenResult = await getBkashIdToken();
+	// console.log(getnIdtokenResult);
+	res.send("welcome to project management!");
 });
 
 app.use("/api/v1/auth", authRoutes);

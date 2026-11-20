@@ -7,7 +7,7 @@ import { subTaskService } from "./subTask.service";
 
 const createSubTask = catchAsync(async (req: Request, res: Response) => {
 	const { taskId } = req.params;
-	console.log(taskId);
+	// console.log(taskId);
 	if (!taskId) {
 		throw new AppError(httpstatus.BAD_REQUEST, "taskId is required");
 	}

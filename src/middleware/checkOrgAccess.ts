@@ -5,57 +5,57 @@ import { AppError } from "../utility/AppError";
 import { prisma } from "../lib/prisma";
 
 declare global {
-  namespace Express {
-    interface Request {
-      orgId?: string;
-      userRole?: string;
-      orgMemberId?: string;
-    }
-  }
+	namespace Express {
+		interface Request {
+			orgId?: string;
+			userRole?: string;
+			orgMemberId?: string;
+		}
+	}
 }
 
 export const checkOrgAccess = () => {
-  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const organizationId = req.params.organizationId as string;
-    const userId = req.user?.userId;
+	return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+		const organizationId = req.params.organizationId as string;
+		const userId = req.user?.userId;
 
-    if (!userId) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access.");
-    }
+		if (!userId) {
+			throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access.");
+		}
 
-    if (!organizationId) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        "Organization ID is required.",
-      );
-    }
+		if (!organizationId) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Organization ID is required.",
+			);
+		}
 
-    const member = await prisma.organizationMember.findFirst({
-      where: {
-        organizationId,
-        userId,
-      },
-      include: {
-        organization: {
-          select: {
-            id: true,
-            status: true,
-          },
-        },
-      },
-    });
+		const member = await prisma.organizationMember.findFirst({
+			where: {
+				organizationId,
+				userId,
+			},
+			include: {
+				organization: {
+					select: {
+						id: true,
+						status: true,
+					},
+				},
+			},
+		});
 
-    if (!member || !member.status) {
-      throw new AppError(
-        httpStatus.FORBIDDEN,
-        "You are not an active member of this organization.",
-      );
-    }
+		if (!member || !member.status) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not an active member of this organization.",
+			);
+		}
 
-    req.orgId = member.organizationId;
-    req.userRole = member.role;
-    req.orgMemberId = member.id;
+		req.orgId = member.organizationId;
+		req.userRole = member.role;
+		req.orgMemberId = member.id;
 
-    next();
-  });
+		next();
+	});
 };
