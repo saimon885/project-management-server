@@ -12,4 +12,14 @@ router.post(
   requireOrgRole("ORGANIZATION_OWNER"),
   bkashPaymentController.CreateBkashPayment,
 );
+
+router.get(
+  "/my-payment-history",
+  auth(),
+  bkashPaymentController.getMyPaymentHistory,
+);
+router.get(
+  "/organization/payment/callback",
+  bkashPaymentController.getbkashPaymentCallback,
+);
 export const bkashPaymentRoutes = router;

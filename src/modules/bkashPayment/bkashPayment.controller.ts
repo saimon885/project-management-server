@@ -21,16 +21,29 @@ const CreateBkashPayment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getbkashPaymentCallback = catchAsync(
+  async (req: Request, res: Response) => {
+    const { redirectUrl } = await bkashPaymentService.bkashPaymentCallback(
+      req.query,
+    );
+    res.redirect(redirectUrl);
+  },
+);
 const getMyPaymentHistory = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const result = await bkashPaymentService.getMyPaymentHistory(
+    userId as string,
+  );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
-    messege: "inviteation Send  successfull.",
-    data: "result",
+    statusCode: httpStatus.OK,
+    messege: "my payment-history retrive successfull.",
+    data: result,
   });
 });
 
 export const bkashPaymentController = {
   CreateBkashPayment,
   getMyPaymentHistory,
+  getbkashPaymentCallback,
 };
